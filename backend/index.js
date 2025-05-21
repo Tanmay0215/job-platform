@@ -1,38 +1,28 @@
-import express from 'express';
-import cors from 'cors';
-import { hackathons, jobs, internships } from './data.js';
+import dotenv from 'dotenv';
+import connectDB from './db/index.db.js';
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import internRoutes from "./routes/intern.routes.js";
+import hackathonRoutes from "./routes/hackathon.routes.js";
+import jobRoutes from "./routes/job.routes.js";
+dotenv.config()
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+connectDB()
+
+// Middlewares
 app.use(cors());
 app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-app.get('/api/hackathons', (req, res) => {
-    res.json(hackathons);
-});
-
-app.get('/api/jobs', (req, res) => {
-    res.json(jobs);
-});
-
-app.get('/api/internships', (req, res) => {
-    res.json(internships);
-});
-
-app.post('/api/add-opportunity', (req, res) => {
-    const { title, description, location, date } = req.query;
-    const newOpportunity = {
-        id: data.length + 1,
-        title,
-        description,
-        location,
-        date,
-    };
-    // handle add opportunity
-    res.json(newOpportunity);
-});
+// Routes
+app.use('/api/interns', internRoutes);
+app.use('/api/hackathons', hackathonRoutes);
+app.use('/api/jobs', jobRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
